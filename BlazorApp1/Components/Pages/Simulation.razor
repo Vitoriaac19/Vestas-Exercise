@@ -1,0 +1,117 @@
+﻿@page "/simulation"
+@inject SimulationService SimulationService
+
+<h3 style="text-align: center; color: #333; font-family: Arial, sans-serif;">New Simulation</h3>
+
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #555;">Initial Speed (rpm):</label>
+    <input type="number" @bind="initialRotationSpeed" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;" />
+
+    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #555;">Simulation Time (seconds):</label>
+    <input type="number" @bind="simulationTimeSeconds" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;" />
+
+    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #555;">Speed Increment (rpm):</label>
+    <input type="number" @bind="speedIncrement" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;" />
+
+    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #555;">Initial Temperature (°C):</label>
+    <input type="number" @bind="initialTemperature" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;" />
+
+    <!-- Button to trigger the simulation -->
+    <button @onclick="RunSimulation" style="width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Run Simulation</button>
+
+    <button @onclick="TestClick" style="width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Run Simulation 2</button>
+
+    <!-- Adicione um texto para exibir se o botão foi clicado -->
+    @if (buttonClicked)
+    {
+        <p style="text-align: center; color: #FF0000; font-weight: bold;">Botão foi clicado!</p>
+    }
+</div>
+
+<!-- Display a message if the simulation is completed successfully -->
+@if (SimulationCompleted)
+{
+    <p style="text-align: center; color: #28a745; font-weight: bold;">Simulation completed successfully!</p>
+}
+
+@{
+    var simulationData = SimulationService.RetrieveAndDisplayData();
+}
+
+<!-- Check if no simulations are found in the database -->
+@if (simulationData == null || simulationData.Count() == 0)
+{
+    <p style="text-align: center; color: #f44336; font-weight: bold;">No simulations found.</p>
+}
+else
+{
+    <!-- Table to display the stored simulation data -->
+    <table style="width: 100%; margin-top: 20px; border-collapse: collapse; border-radius: 8px; overflow: hidden;">
+        <thead style="background-color: #f1f1f1; font-weight: bold;">
+            <tr>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Rotation Speed</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Timestamp</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Stress Level</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Temperature</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through the retrieved data and display it in table rows -->
+            @foreach (var simulation in simulationData)
+            {
+                <tr style="background-color: #fff;">
+                    <td style="padding: 10px; border: 1px solid #ddd;">@simulation.RotationSpeed</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">@simulation.Timestamp</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">@simulation.StressLevel</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">@simulation.Temperature</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+
+    private bool buttonClicked = false;
+
+    private void TestClick()
+    {
+        buttonClicked = true;
+        StateHasChanged();
+    }
+
+
+
+
+
+    // Variables to store the values of the input fields
+    private double initialRotationSpeed;
+    private double simulationTimeSeconds;
+    private double speedIncrement;
+    private double initialTemperature;
+
+    // Variable to track if the simulation is completed
+    private bool SimulationCompleted = false;
+
+    // Method to trigger the simulation
+    private void RunSimulation()
+    {
+        try
+        {
+            // Call the RunSimulationAndSave function to perform the simulation and save the data
+            SimulationService.RunSimulationAndSave(initialRotationSpeed, simulationTimeSeconds, speedIncrement, initialTemperature);
+
+            // Set SimulationCompleted to true to show a success message
+            SimulationCompleted = true;
+
+            // Force UI refresh to show updated data
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error running simulation: {ex.Message}");
+            // Consider adding error message display to the UI
+        }
+    }
+}

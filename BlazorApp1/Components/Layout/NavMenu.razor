@@ -1,0 +1,25 @@
+﻿<div class="top-row ps-3 navbar navbar-dark" style="background-color: #006AB6; color: white;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="" style="color: white;">Vestas Exercise</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" style="display: none;" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()"
+     style="background-color: #006AB6; color: white; height: 100vh; padding-top: 20px; padding-left: 10px;">
+    <nav class="flex-column">
+        <div class="nav-item px-3" style="margin-bottom: 10px;">
+            <NavLink class="nav-link" href="simulation"
+                     style="color: white; text-decoration: none; padding: 10px; font-weight: bold; border-radius: 4px; transition: background-color 0.3s ease;">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Simulator
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+<style>
+    .nav-link:hover {
+        background-color: #005c97; 
+    }
+</style>
